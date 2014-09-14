@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"> 
+        
+<hibernate-mapping  package="psych.server.data.dao.dto">
+
+<!-- ENUMS -->
+
+    <typedef name="UserStatusType" class="psych.server.data.dao.EnumUserType">
+        <param name="enumClassName">psych.server.data.dao.UserStatusType</param>
+    </typedef>
+
+<!-- User Object -->
+	<class name="UserDTO" table="ct_user">
+		<id name="userID" type="string" column="user_id" length="36">
+            <generator class="org.hibernate.id.UUIDGenerator" />
+        </id>
+		<property name="userName" type="java.lang.String" column="user_name" unique="true" length="200" not-null="true" />
+		<property name="nickName" type="java.lang.String"  column="nick_name" length="200" />
+		<property name="firstName" type="java.lang.String" column="first_name" length="255" />
+		<property name="lastName" type="java.lang.String" column="last_name" length="255" />
+		<property name="emailAddr" type="java.lang.String" column="email_addr" unique="true" length="200" not-null="true" />
+		<property name="status" type="UserStatusType" column="status" length="25" not-null="true" />
+		<property name="userPasswd" type="java.lang.String" column="user_passwd" length="56" not-null="true" />
+		<property name="addDt" type="timestamp" column="add_dt"/>
+		<property name="lastUpdateDt" type="timestamp"  column="last_update_dt"/>
+		<property name="passwdRestDt" type="timestamp" column="passwd_rest_dt"/>
+		<property name="credentialsNonExpired" type="boolean" column="credentials_nonexpired" not-null="true"/>
+		<property name="accountNonLocked" type="boolean" column="account_nonlocked" not-null="true"/>
+		<property name="lastLoginDt" type="timestamp" column="last_login_dt" />
+		<property name="passwdRestCode" type="java.lang.String" column="passwd_rest_code"  length="32"/>
+		<property name="deleteFlag" type="boolean" column="delete_flag" not-null="true"/>
+		<property name="lockoutCnt" type="java.lang.Integer" column="lock_out_cnt" not-null="false"/>
+		
+		<!-- Relationship to other objects -->
+		<many-to-one name="systemProfileDTO" column="system_profile_id" class="SystemProfileDTO" not-null="true" />
+		
+		<!-- Relationship to User table for doctor -->
+		<many-to-one name="doctorDTO" column="doctor_user_id" class="UserDTO" not-null="false" />
+		
+	</class>
+	
+
+	
+	<!-- User Profiles, ties a user to provisioning and other information -->
+    <class name="SystemProfileDTO" table="ct_system_profile">
+		<id name="systemProfileID" type="string" column="system_profile_id" length="32"/>
+        <property name="profileName" type="string" column="profile_name" length="25" not-null="true" />
+        <property name="profileDescr" type="string" column="profile_descr" length="255" />
+    </class>
+	
+
+	<!-- Profile to Roles -->
+    <class name="ProfileToSystemRoleDTO" table="ct_profile_to_system_role">
+        <id name="profileToSystemRoleID" type="string" column="profile_to_system_role_id" length="36">
+        	<generator class="org.hibernate.id.UUIDGenerator" />
+        </id>
+        <many-to-one name="systemProfileDTO" column="system_profile_id" class="SystemProfileDTO" not-null="true" />
+        <many-to-one name="systemRoleDTO" column="system_role_id" class="SystemRoleDTO" not-null="true" />
+    </class>
+	
+	<!-- System Roles -->
+    <class name="SystemRoleDTO" table="ct_system_role">
+        <id name="systemRoleID" type="string" column="system_role_id" length="32" />
+        <property name="systemRoleName" type="string" column="impl_name" length="25" not-null="true" />
+        <property name="descr" type="string" column="implementation" length="255" not-null="true" />
+    </class>
+	
+	
+	<!-- Properties Category -->
+    <class name="PropertyCategoryDTO" table="ct_property_cat">
+        <id name="catId" type="string" length="128" column="cat_id" />
+        <property name="catName" type="string" column="cat_name" length="128" not-null="true" />
+        <property name="catDescr" type="string" column="cat_descr" length="1000" not-null="true" />
+        <set name="properties" lazy="true" inverse="true" cascade="all-delete-orphan">
+            <key column="cat_id" />
+            <one-to-many class="PropertyDTO" />
+        </set>
+    </class>
+
+    <!-- Properties -->
+    <class name="PropertyDTO" table="ct_property">
+        <composite-id name="propertyPK" class="PropertyPK">
+            <key-property name="propertyId" type="string" column="property_id" length="255" />
+            <key-many-to-one name="catInfo" column="cat_id" class="PropertyCategoryDTO" />
+        </composite-id>
+        <property name="propertyValue" type="string" column="property_value" length="1000" not-null="false" />
+    </class>
+
+  
+  <!-- Goal Object -->
+    <class name="GoalDTO" table="ct_property_cat">
+        <id name="goalID" type="string" column="goal_id" length="36">
+        	<generator class="org.hibernate.id.UUIDGenerator" />
+        </id>
+        <property name="goalName" type="string" column="goal_name" length="128" not-null="true" />
+        <property name="goalDescr" type="string" column="goal_descr" length="500" not-null="false" />
+        <!-- Enum or FK for score type -->
+        <property name="scoreType" type="string" column="score_type" length="500" not-null="true" />
+        <!-- Consider Goal Status ARCHIVE/ACTIVE/DELETED ENUM -->
+        <property name="goalStatus" type="boolean" column="goal_status" not-null="false"/>
+        <property name="addDt" type="timestamp" column="add_dt"/>
+		<property name="lastUpdateDt" type="timestamp" column="last_update_dt"/>
+		
+		<!-- Relationship to User table-->
+		<many-to-one name="userDTO" column="user_id" class="UserDTO" not-null="true" />
+    </class>
+  
+   <!-- Score Object -->
+    <class name="ScoreDTO" table="ct_property_cat">
+        <id name="scoreID" type="string" column="score_id" length="36">
+        	<generator class="org.hibernate.id.UUIDGenerator" />
+        </id>
+        <property name="scoreValStr" type="string" column="score_val_str" length="10" not-null="false" />
+        <property name="scoreValInt" type="java.lang.Integer" column="score_val_int" not-null="false" />
+        <property name="scoreNote" type="string" column="score_note" length="500" not-null="false" />
+        <property name="addDt" type="timestamp" column="add_dt"/>
+		<property name="lastUpdateDt" type="timestamp"  column="last_update_dt"/>
+		
+        <!-- Relationship to Goal table-->
+		<many-to-one name="goalDTO" column="goal_id" class="GoalDTO" not-null="true" />
+    </class> 
+  
+	
+</hibernate-mapping>

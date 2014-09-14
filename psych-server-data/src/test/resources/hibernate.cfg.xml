@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration SYSTEM
+    "classpath://org/hibernate/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+	    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <!--  Local -->
+        <!-- 
+        <property name="connection.username">root</property>
+		<property name="connection.password">fifa98</property>
+		<property name="connection.url">jdbc:mysql://localhost/rise</property>
+		 -->
+		<!-- Production -->
+		<!--  -->
+		<property name="connection.username">root</property>
+		<property name="connection.password">fifa98</property>
+		<property name="connection.url">jdbc:mysql://localhost/psych</property>
+		
+		
+		<property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+		<property name="connection.pool_size">10</property>
+		<property name="hbm2ddl.auto">update</property>  
+		<property name="show_sql">false</property>
+         <!-- Enable Hibernate's automatic session context management -->
+        <property name="current_session_context_class">thread</property> 
+		<!--  caching this causes issues as we update the database from multiple sources -->
+		<property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property>
+        
+        <!-- Disable the second-level cache  -->
+        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>  
+		
+		<mapping resource="psych/server/data/dao/hbm/core.hbm.xml" />
+		
+		</session-factory>
+</hibernate-configuration>
