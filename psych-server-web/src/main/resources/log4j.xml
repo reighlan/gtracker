@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="appender" class="org.apache.log4j.FileAppender">
+        <param name="File" value="C:/logs/falkor.log" />
+        <param name="Append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%L | %d{MM-dd-yy HH:mm:ss.SSS} %-5p %-X{USER_ID} %-X{REMOTE_ADDR} %-C.%M:%m%n" />
+        </layout>
+    </appender>
+
+    <appender name="RootConsole" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%L | %d{MM-dd-yy HH:mm:ss.SSS} %-5p %-X{USER_ID} %-X{REMOTE_ADDR} %-C.%M:%m%n" />
+        </layout>
+    </appender>
+
+
+    <logger name="com.amazon" additivity="true">
+        <level value="trace" />
+    </logger>
+
+    <logger name="com.aurora.falkor" additivity="true">
+        <level value="trace" />
+    </logger>
+
+
+  <root>
+    <priority value="info"/>
+     <appender-ref ref="RootConsole"/>
+  </root> 
+
+
+</log4j:configuration>

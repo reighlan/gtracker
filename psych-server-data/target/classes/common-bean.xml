@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+
+<!-- Import other resources dynamically, put extensions in a psychCommon-bean.xml file anywhere beyond psych.server -->
+    <import  resource="classpath*:psych/server/**/psychCommon-bean.xml"/> 
+
+	<bean id="propertysvc" class="psych.server.data.svc.impl.PropertySvc">
+			<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean" scope="singleton">
+		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
+		<property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.current_session_context_class">thread</prop>
+            </props>
+        </property>
+	</bean>
+
+
+
+</beans>
